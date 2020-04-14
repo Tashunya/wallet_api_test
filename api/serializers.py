@@ -1,23 +1,30 @@
 from rest_framework import serializers
-# from rest_framework.exceptions import ValidationError
-# from django.shortcuts import get_object_or_404
 from datetime import datetime
 from .models import Wallet, Operation
 
 
 class OperationSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
 
     class Meta:
         model = Operation
-        fields = ('id', 'date', 'type', 'amount', 'wallet', 'comment')
+        fields = '__all__'
 
     def create(self, validated_data):
         new_operation = Operation.objects.create(**validated_data)
         return new_operation
 
 
+class OperationListSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
+
+    class Meta:
+        model = Operation
+        exclude = ('wallet', )
+
+
 class WalletSerializer(serializers.ModelSerializer):
-    operations = OperationSerializer(read_only=True, many=True)
+    operations = OperationListSerializer(read_only=True, many=True)
 
     class Meta:
         model = Wallet
@@ -32,3 +39,9 @@ class WalletSerializer(serializers.ModelSerializer):
         instance.name = validated_data.get('name', instance.name)
         instance.save()
         return instance
+
+
+class WalletListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        exclude = ('created', )

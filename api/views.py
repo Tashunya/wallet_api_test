@@ -1,11 +1,12 @@
 from rest_framework import generics
 from .models import Wallet, Operation
-from .serializers import WalletSerializer, OperationSerializer
+from .serializers import WalletSerializer, WalletListSerializer,\
+    OperationSerializer
 
 
 class WalletList(generics.ListCreateAPIView):
     queryset = Wallet.objects.all()
-    serializer_class = WalletSerializer
+    serializer_class = WalletListSerializer
 
 
 class WalletDetail(generics.RetrieveUpdateDestroyAPIView):

@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.utils import timezone
 from decimal import Decimal
 
 
@@ -17,12 +18,13 @@ class Wallet(models.Model):
 
 class Operation(models.Model):
     OPERATION_TYPE = ((0, "Costs"),
-                       (1, "Income"))
+                      (1, "Income"))
 
-    date = models.DateTimeField(blank=False, auto_now_add=True)
+    date = models.DateTimeField(blank=False, default=timezone.now)
     type = models.IntegerField(choices=OPERATION_TYPE, blank=False)
     amount = models.DecimalField(blank=False, decimal_places=2, max_digits=12,
-                                 validators=[MinValueValidator(Decimal('0.01'))])
+                                 validators=[
+                                     MinValueValidator(Decimal('0.01'))])
     comment = models.CharField(max_length=250, blank=True)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE,
                                related_name="operations")
@@ -36,23 +38,19 @@ class Operation(models.Model):
     def save(self, *args, **kwargs):
         created = self.pk is None
         super(Operation, self).save(*args, **kwargs)
-        self._update_wallet_after_save(created)
-        print(self)
-
-    def _update_wallet_after_save(self, created=False):
         if created:
-            sum = self.amount if self.type == 1 else -self.amount
-            self.wallet.balance += sum
-            self.wallet.save()
-            print(f"Баланс кошелька {self.wallet} обновлен.")
+            self._update_wallet(created)
 
     def delete(self, using=None, keep_parents=False):
-        wallet = self.wallet
-        self._update_wallet_after_delete()
+        self._update_wallet()
         super(Operation, self).delete()
-        print(f'Удаление операции выполнено. Кошелек {wallet} обновлен')
 
-    def _update_wallet_after_delete(self):
-        sum = self.amount if self.type == 0 else -self.amount
+    def _update_wallet(self, save=False):
+        if save:
+            sum = self.amount if self.type == 1 else -self.amount
+        else:
+            sum = self.amount if self.type == 0 else -self.amount
+
         self.wallet.balance += sum
         self.wallet.save()
+        print(f"Balance of {self.wallet} updated.")
