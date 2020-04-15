@@ -4,18 +4,16 @@ from .models import Wallet, Operation
 
 
 class OperationSerializer(serializers.ModelSerializer):
+    """ Serialize all operations """
     date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
 
     class Meta:
         model = Operation
         fields = '__all__'
 
-    # def create(self, validated_data):
-    #     new_operation = Operation.objects.create(**validated_data)
-    #     return new_operation
-
 
 class OperationListSerializer(serializers.ModelSerializer):
+    """ Serializer operations for certain wallet """
     date = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
 
     class Meta:
@@ -24,6 +22,7 @@ class OperationListSerializer(serializers.ModelSerializer):
 
 
 class WalletSerializer(serializers.ModelSerializer):
+    """ Serialize certain wallet with operation list"""
     operations = OperationListSerializer(read_only=True, many=True)
     balance = serializers.DecimalField(read_only=True, max_digits=12,
                                        decimal_places=2)
@@ -39,6 +38,7 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class WalletListSerializer(serializers.ModelSerializer):
+    """ Serialize all wallets """
     class Meta:
         model = Wallet
         exclude = ('created', )

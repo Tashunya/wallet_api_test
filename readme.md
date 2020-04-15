@@ -235,4 +235,5 @@ Delete operation by id
 ###### **Response code**
 
 `204` for success
+
 `404` for error

@@ -39,13 +39,15 @@ class Operation(models.Model):
         created = self.pk is None
         super(Operation, self).save(*args, **kwargs)
         if created:
-            self._update_wallet(created)
+            self._update_wallet_balance(created)
 
     def delete(self, using=None, keep_parents=False):
-        self._update_wallet()
+        self._update_wallet_balance()
         super(Operation, self).delete()
 
-    def _update_wallet(self, save=False):
+    def _update_wallet_balance(self, save=False):
+        """ Update wallet balance depending on action type - adding or
+        deleting operation """
         if save:
             sum = self.amount if self.type == 1 else -self.amount
         else:

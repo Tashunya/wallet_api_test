@@ -43,12 +43,24 @@ class WalletDetailViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(wallet_obj.name, update_payload["name"])
 
+    def test_update_wallet_balance_fail(self):
+        wallet = Wallet.objects.get(name="Test Wallet 2")
+        initial_balance = wallet.balance
+        print(initial_balance)
+        update_payload = {'name': 'Updated Wallet', 'balance': -15000}
+        response = client.post(reverse('operation_list'),
+                               data=json.dumps(update_payload),
+                               content_type='application/json')
+        wallet.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(wallet.balance, initial_balance)
+
     def test_delete_wallet(self):
         wallet_obj = Wallet.objects.get(name="Test Wallet 1")
         Operation.objects.create(type=0, wallet=wallet_obj, amount=500,
                                  comment="")
-        response = client.delete(reverse('wallet', kwargs={'pk':
-                                                               wallet_obj.id}))
+        response = client.delete(reverse('wallet',
+                                         kwargs={'pk': wallet_obj.id}))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         operations_count = Operation.objects.count()
         self.assertEqual(operations_count, 0)
@@ -168,9 +180,6 @@ class OperationListViewTest(TestCase):
                                   "comment": "Non-empty comment"
                                   }
         initial_balance = self.wallet.balance
-        type = self.operation_payload["type"]
-        amount = [-self.operation_payload['amount'],
-                  self.operation_payload['amount']][type]
         response = client.post(reverse('operation_list'),
                                data=json.dumps(invalid_payload),
                                content_type='application/json')

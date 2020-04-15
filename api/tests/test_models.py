@@ -20,7 +20,7 @@ class WalletTest(TestCase):
         wallet_obj = Wallet.objects.get(name="Test Wallet 2")
         self.assertEqual(wallet_obj.balance, Decimal(-1000.00))
 
-    def test_duplicate_name_wallet(self):
+    def test_duplicate_name_wallet_fail(self):
         with self.assertRaises(IntegrityError):
             Wallet.objects.create(name="Test Wallet 1", balance=Decimal(
                 10000.00))
