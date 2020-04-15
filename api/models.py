@@ -53,4 +53,3 @@ class Operation(models.Model):
 
         self.wallet.balance += sum
         self.wallet.save()
-        print(f"Balance of {self.wallet} updated.")

@@ -1,6 +1,23 @@
 Тестовое задание
 
 API приложения для ведения личного бюджета
+____________________
+
+**Installation**
+
+`git clone https://github.com/Tashunya/wallet_api_test.git`
+
+`cd wallet_api_test`
+
+`pip install -r requirements.txt`
+
+`python manage.py migrate`
+
+`python manage.py createsuperuser`
+
+`python manage.py runserver`
+
+TODO: CHANGE THE APPLICATION SECRET KEY
 ____________________________
 
 All responses are JSON structures.
