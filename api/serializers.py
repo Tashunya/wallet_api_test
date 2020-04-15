@@ -10,9 +10,9 @@ class OperationSerializer(serializers.ModelSerializer):
         model = Operation
         fields = '__all__'
 
-    def create(self, validated_data):
-        new_operation = Operation.objects.create(**validated_data)
-        return new_operation
+    # def create(self, validated_data):
+    #     new_operation = Operation.objects.create(**validated_data)
+    #     return new_operation
 
 
 class OperationListSerializer(serializers.ModelSerializer):
@@ -25,15 +25,12 @@ class OperationListSerializer(serializers.ModelSerializer):
 
 class WalletSerializer(serializers.ModelSerializer):
     operations = OperationListSerializer(read_only=True, many=True)
+    balance = serializers.DecimalField(read_only=True, max_digits=12,
+                                       decimal_places=2)
 
     class Meta:
         model = Wallet
         fields = ("id", "name", "balance", 'operations')
-
-    def create(self, validated_data):
-        validated_data['created'] = datetime.now()
-        new_wallet = Wallet.objects.create(**validated_data)
-        return new_wallet
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -45,3 +42,8 @@ class WalletListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
         exclude = ('created', )
+
+    def create(self, validated_data):
+        validated_data['created'] = datetime.now()
+        new_wallet = Wallet.objects.create(**validated_data)
+        return new_wallet

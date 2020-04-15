@@ -32,7 +32,7 @@ Create a new wallet
 ###### **Request parameters**
 
 - name (str, required, unique)
-- balance (decimal number, required)
+- balance (integer or decimal with 2 decimal places, required)
 
 ###### **Response parameters**
 - id (int)
@@ -78,7 +78,7 @@ Retrieve list of all wallets ordered by date when created
 
 **GET** `/api/wallets/<pk>`
 
-Retrieve a wallet with all related operations ordered by date field
+Retrieve a wallet with all related operations ordered by reversed date field
 
 ###### **Response body example**
  
@@ -139,7 +139,7 @@ Operations are not editable.
 ###### **Request parameters**
 - date (str in format "YYYY-MM-DDThh:mm:ss")
 - type (int, 0 for costs, 1 for income)
-- amount (positive decimal number, min value = 0.01)
+- amount (positive integer or decimal with 2 decimal places, min value = 0.01)
 - wallet (int)
 - comment (str, optional, may be blank)
 
@@ -158,6 +158,12 @@ Operations are not editable.
     "amount": 500.00,
     "comment": "plus 500",
     "wallet": 1}`
+    
+###### **Response code**
+
+`201` for success
+
+`400` for error
 
 ###### **Response body example**
 
@@ -184,7 +190,6 @@ Retrieve a list of all operations ordered by date field
 - amount (str, positive decimal number)
 - wallet (int)
 - comment (str, optional, may be blank)
-
 
 ###### **Response body example**
 `[
@@ -213,3 +218,4 @@ Delete operation by id
 ###### **Response code**
 
 `204` for success
+`404` for error

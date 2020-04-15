@@ -4,12 +4,12 @@ from .serializers import WalletSerializer, WalletListSerializer,\
     OperationSerializer
 
 
-class WalletList(generics.ListCreateAPIView):
+class WalletListView(generics.ListCreateAPIView):
     queryset = Wallet.objects.all()
     serializer_class = WalletListSerializer
 
 
-class WalletDetail(generics.RetrieveUpdateDestroyAPIView):
+class WalletDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
@@ -19,7 +19,7 @@ class OperationListView(generics.ListCreateAPIView):
     serializer_class = OperationSerializer
 
 
-class OperationView(generics.RetrieveUpdateDestroyAPIView):
+class OperationDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Operation.objects.all()
     serializer_class = OperationSerializer
     http_method_names = ['delete', 'head']
